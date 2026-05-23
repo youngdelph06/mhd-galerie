@@ -1,23 +1,279 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MDH Institut — Galerie Photos</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
+<meta charset="UTF-8">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-sans, system-ui); background: var(--color-background-tertiary); color: var(--color-text-primary); min-height: 100vh; }
 
-  <!-- Supabase SDK -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  .app { max-width: 900px; margin: 0 auto; padding: 1.5rem; }
+
+  /* --- AUTH SCREEN --- */
+  .auth-wrap { display: flex; align-items: center; justify-content: center; min-height: 80vh; }
+  .auth-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 2rem; width: 100%; max-width: 400px; }
+  .brand { display: flex; align-items: center; gap: 10px; margin-bottom: 1.5rem; }
+  .brand-logo { width: 38px; height: 38px; border-radius: var(--border-radius-md); background: #E1F5EE; display: flex; align-items: center; justify-content: center; }
+  .brand-name { font-size: 16px; font-weight: 500; }
+  .brand-sub { font-size: 12px; color: var(--color-text-secondary); }
+  .auth-title { font-size: 18px; font-weight: 500; margin-bottom: 0.25rem; }
+  .auth-sub { font-size: 13px; color: var(--color-text-secondary); margin-bottom: 1.5rem; }
+  .field { margin-bottom: 1rem; }
+  .field label { display: block; font-size: 13px; color: var(--color-text-secondary); margin-bottom: 6px; }
+  .field input { width: 100%; padding: 9px 12px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); font-size: 14px; background: var(--color-background-primary); color: var(--color-text-primary); outline: none; transition: border 0.15s; }
+  .field input:focus { border-color: #1D9E75; box-shadow: 0 0 0 2px rgba(29,158,117,0.15); }
+  .btn-primary { width: 100%; padding: 10px; background: #1D9E75; color: #fff; border: none; border-radius: var(--border-radius-md); font-size: 14px; font-weight: 500; cursor: pointer; transition: background 0.15s; }
+  .btn-primary:hover { background: #0F6E56; }
+  .auth-toggle { margin-top: 1rem; font-size: 13px; color: var(--color-text-secondary); text-align: center; }
+  .auth-toggle span { color: #1D9E75; cursor: pointer; font-weight: 500; }
+  .err { font-size: 12px; color: var(--color-text-danger); margin-top: 0.5rem; }
+
+  /* --- DASHBOARD --- */
+  .topbar { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
+  .topbar-left { display: flex; align-items: center; gap: 10px; }
+  .avatar { width: 36px; height: 36px; border-radius: 50%; background: #E1F5EE; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 500; color: #0F6E56; }
+  .user-name { font-size: 14px; font-weight: 500; }
+  .user-email { font-size: 12px; color: var(--color-text-secondary); }
+  .btn-logout { padding: 7px 14px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); background: transparent; color: var(--color-text-secondary); font-size: 13px; cursor: pointer; }
+  .btn-logout:hover { background: var(--color-background-secondary); }
+
+  .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 1.5rem; }
+  .stat-card { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 1rem; }
+  .stat-label { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 4px; }
+  .stat-value { font-size: 22px; font-weight: 500; }
+
+  .upload-zone { background: var(--color-background-primary); border: 1.5px dashed var(--color-border-secondary); border-radius: var(--border-radius-lg); padding: 2rem; text-align: center; margin-bottom: 1.5rem; cursor: pointer; transition: border-color 0.15s, background 0.15s; }
+  .upload-zone:hover, .upload-zone.drag { border-color: #1D9E75; background: #E1F5EE20; }
+  .upload-icon { font-size: 32px; color: #1D9E75; margin-bottom: 0.5rem; }
+  .upload-title { font-size: 14px; font-weight: 500; margin-bottom: 4px; }
+  .upload-hint { font-size: 12px; color: var(--color-text-secondary); }
+  .upload-input { display: none; }
+
+  .gallery-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+  .gallery-title { font-size: 16px; font-weight: 500; }
+  .badge { font-size: 11px; padding: 3px 8px; border-radius: 99px; background: #E1F5EE; color: #0F6E56; margin-left: 8px; font-weight: 500; }
+
+  .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
+  .photo-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); overflow: hidden; position: relative; }
+  .photo-img { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; }
+  .photo-img-placeholder { width: 100%; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 36px; }
+  .photo-info { padding: 8px 10px; }
+  .photo-name { font-size: 12px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .photo-date { font-size: 11px; color: var(--color-text-secondary); margin-top: 2px; }
+  .photo-actions { display: flex; gap: 6px; margin-top: 8px; }
+  .btn-icon { padding: 5px 8px; border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); background: transparent; color: var(--color-text-secondary); font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 4px; }
+  .btn-icon:hover { background: var(--color-background-secondary); }
+  .btn-icon.danger:hover { background: #FCEBEB; color: #A32D2D; border-color: #F09595; }
+
+  .empty-state { text-align: center; padding: 3rem; color: var(--color-text-secondary); }
+  .empty-icon { font-size: 40px; margin-bottom: 0.5rem; }
+  .empty-text { font-size: 14px; }
+
+  .toast { position: fixed; bottom: 1.5rem; right: 1.5rem; background: #1D9E75; color: #fff; padding: 10px 16px; border-radius: var(--border-radius-md); font-size: 13px; font-weight: 500; opacity: 0; transform: translateY(8px); transition: all 0.25s; z-index: 999; }
+  .toast.show { opacity: 1; transform: translateY(0); }
+
+  .lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+  .lightbox img { max-width: 90vw; max-height: 85vh; border-radius: var(--border-radius-md); object-fit: contain; }
+  .lightbox-close { position: absolute; top: 1rem; right: 1rem; background: rgba(255,255,255,0.15); border: none; color: #fff; width: 36px; height: 36px; border-radius: 50%; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+</style>
 </head>
 <body>
-  <div id="app">
-    <div class="loading-screen">
-      <i class="ti ti-camera"></i>
-      <p>Chargement...</p>
+<div class="app" id="app"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const USERS_KEY = 'mdh_users';
+const PHOTOS_KEY = 'mdh_photos';
+
+function getUsers() { try { return JSON.parse(localStorage.getItem(USERS_KEY) || '{}'); } catch(e) { return {}; } }
+function saveUsers(u) { localStorage.setItem(USERS_KEY, JSON.stringify(u)); }
+function getPhotos(email) { try { return JSON.parse(localStorage.getItem(PHOTOS_KEY + '_' + email) || '[]'); } catch(e) { return []; } }
+function savePhotos(email, photos) { localStorage.setItem(PHOTOS_KEY + '_' + email, JSON.stringify(photos)); }
+
+let currentUser = null;
+let lightboxSrc = null;
+
+function showToast(msg, color) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.background = color || '#1D9E75';
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function initials(name) {
+  return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2);
+}
+
+function formatDate(ts) {
+  return new Date(ts).toLocaleDateString('fr-FR', { day:'2-digit', month:'short', year:'numeric' });
+}
+
+function renderAuth(mode) {
+  mode = mode || 'login';
+  const isLogin = mode === 'login';
+  document.getElementById('app').innerHTML = `
+    <div class="auth-wrap">
+      <div class="auth-card">
+        <div class="brand">
+          <div class="brand-logo"><i class="ti ti-camera" style="font-size:20px;color:#1D9E75"></i></div>
+          <div>
+            <div class="brand-name">MDH Institut</div>
+            <div class="brand-sub">Galerie photos clients</div>
+          </div>
+        </div>
+        <div class="auth-title">${isLogin ? 'Connexion' : 'Créer un compte'}</div>
+        <div class="auth-sub">${isLogin ? 'Accédez à votre espace photo personnel' : 'Rejoignez la galerie MDH Institut'}</div>
+        ${!isLogin ? `<div class="field"><label>Nom complet</label><input type="text" id="auth-name" placeholder="Marie Dupont"></div>` : ''}
+        <div class="field"><label>Adresse email</label><input type="email" id="auth-email" placeholder="vous@exemple.com"></div>
+        <div class="field"><label>Mot de passe</label><input type="password" id="auth-pw" placeholder="••••••••"></div>
+        <div id="auth-err" class="err"></div>
+        <button class="btn-primary" onclick="handleAuth('${mode}')" style="margin-top:0.5rem">${isLogin ? 'Se connecter' : "S'inscrire"}</button>
+        <div class="auth-toggle">
+          ${isLogin ? "Pas encore de compte ? <span onclick=\"renderAuth('register')\">Créer un compte</span>" : "Déjà un compte ? <span onclick=\"renderAuth('login')\">Se connecter</span>"}
+        </div>
+      </div>
     </div>
-  </div>
-  <div class="toast" id="toast"></div>
-  <script src="app.js"></script>
+  `;
+}
+
+function handleAuth(mode) {
+  const email = document.getElementById('auth-email').value.trim();
+  const pw = document.getElementById('auth-pw').value;
+  const err = document.getElementById('auth-err');
+  const users = getUsers();
+
+  if (!email || !pw) { err.textContent = 'Veuillez remplir tous les champs.'; return; }
+  if (!/\S+@\S+\.\S+/.test(email)) { err.textContent = 'Email invalide.'; return; }
+
+  if (mode === 'register') {
+    const name = document.getElementById('auth-name').value.trim();
+    if (!name) { err.textContent = 'Veuillez entrer votre nom.'; return; }
+    if (users[email]) { err.textContent = 'Ce compte existe déjà.'; return; }
+    users[email] = { name, email, pw, createdAt: Date.now() };
+    saveUsers(users);
+    currentUser = users[email];
+    showToast('Compte créé avec succès !');
+  } else {
+    if (!users[email]) { err.textContent = 'Aucun compte trouvé.'; return; }
+    if (users[email].pw !== pw) { err.textContent = 'Mot de passe incorrect.'; return; }
+    currentUser = users[email];
+    showToast('Bienvenue, ' + currentUser.name.split(' ')[0] + ' !');
+  }
+  renderDashboard();
+}
+
+function renderDashboard() {
+  const photos = getPhotos(currentUser.email);
+  const totalSize = photos.reduce((s, p) => s + (p.size || 0), 0);
+  const sizeStr = totalSize > 1024*1024 ? (totalSize/1024/1024).toFixed(1)+' Mo' : (totalSize/1024).toFixed(0)+' Ko';
+
+  let galleryHTML = '';
+  if (photos.length === 0) {
+    galleryHTML = `<div class="empty-state"><div class="empty-icon"><i class="ti ti-photo-off"></i></div><div class="empty-text">Aucune photo pour l'instant.<br>Ajoutez votre première photo ci-dessus.</div></div>`;
+  } else {
+    galleryHTML = '<div class="gallery-grid">' + photos.map((p, i) => `
+      <div class="photo-card">
+        <img class="photo-img" src="${p.data}" alt="${p.name}" onclick="openLightbox('${p.data}')" style="cursor:pointer">
+        <div class="photo-info">
+          <div class="photo-name">${p.name}</div>
+          <div class="photo-date">${formatDate(p.ts)}</div>
+          <div class="photo-actions">
+            <button class="btn-icon danger" onclick="deletePhoto(${i})"><i class="ti ti-trash"></i> Supprimer</button>
+          </div>
+        </div>
+      </div>`).join('') + '</div>';
+  }
+
+  document.getElementById('app').innerHTML = `
+    <div class="topbar">
+      <div class="topbar-left">
+        <div class="avatar">${initials(currentUser.name)}</div>
+        <div>
+          <div class="user-name">${currentUser.name}</div>
+          <div class="user-email">${currentUser.email}</div>
+        </div>
+      </div>
+      <button class="btn-logout" onclick="logout()"><i class="ti ti-logout" style="font-size:14px;vertical-align:-2px;margin-right:4px"></i>Se déconnecter</button>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-label"><i class="ti ti-photo" style="font-size:13px;vertical-align:-1px;margin-right:3px"></i>Photos</div>
+        <div class="stat-value">${photos.length}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label"><i class="ti ti-database" style="font-size:13px;vertical-align:-1px;margin-right:3px"></i>Espace utilisé</div>
+        <div class="stat-value" style="font-size:16px;padding-top:4px">${photos.length ? sizeStr : '—'}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label"><i class="ti ti-calendar" style="font-size:13px;vertical-align:-1px;margin-right:3px"></i>Membre depuis</div>
+        <div class="stat-value" style="font-size:13px;padding-top:6px">${formatDate(currentUser.createdAt)}</div>
+      </div>
+    </div>
+
+    <div class="upload-zone" onclick="document.getElementById('file-input').click()" id="drop-zone">
+      <input type="file" id="file-input" class="upload-input" accept="image/*" multiple onchange="handleFiles(this.files)">
+      <div class="upload-icon"><i class="ti ti-cloud-upload"></i></div>
+      <div class="upload-title">Cliquer pour ajouter des photos</div>
+      <div class="upload-hint">JPG, PNG, WEBP — Glissez vos fichiers ici</div>
+    </div>
+
+    <div class="gallery-header">
+      <div class="gallery-title">Mes photos <span class="badge">${photos.length}</span></div>
+    </div>
+    ${galleryHTML}
+  `;
+
+  const dz = document.getElementById('drop-zone');
+  dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag'); });
+  dz.addEventListener('dragleave', () => dz.classList.remove('drag'));
+  dz.addEventListener('drop', e => { e.preventDefault(); dz.classList.remove('drag'); handleFiles(e.dataTransfer.files); });
+}
+
+function handleFiles(files) {
+  const photos = getPhotos(currentUser.email);
+  let loaded = 0;
+  Array.from(files).forEach(file => {
+    if (!file.type.startsWith('image/')) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      photos.unshift({ name: file.name, data: e.target.result, ts: Date.now(), size: file.size });
+      loaded++;
+      if (loaded === files.length) {
+        savePhotos(currentUser.email, photos);
+        showToast(loaded + ' photo' + (loaded > 1 ? 's' : '') + ' ajoutée' + (loaded > 1 ? 's' : '') + ' !');
+        renderDashboard();
+      }
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function deletePhoto(i) {
+  const photos = getPhotos(currentUser.email);
+  photos.splice(i, 1);
+  savePhotos(currentUser.email, photos);
+  showToast('Photo supprimée', '#A32D2D');
+  renderDashboard();
+}
+
+function openLightbox(src) {
+  const lb = document.createElement('div');
+  lb.className = 'lightbox';
+  lb.innerHTML = `<img src="${src}"><button class="lightbox-close" onclick="this.parentElement.remove()"><i class="ti ti-x"></i></button>`;
+  lb.onclick = e => { if (e.target === lb) lb.remove(); };
+  document.body.appendChild(lb);
+}
+
+function logout() {
+  currentUser = null;
+  renderAuth('login');
+  showToast('Déconnexion réussie');
+}
+
+renderAuth('login');
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
 </body>
 </html>
