@@ -6,7 +6,7 @@
 //  par celles de votre projet Supabase
 // ============================================================
 
-const SUPABASE_URL  = 'https://rklzhuyqgrshzmuxwswq.supabase.com';
+const SUPABASE_URL  = 'https://rklzhuyqgrshzmuxwswq.supabase.co';
 const SUPABASE_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJrbHpodXlxZ3JzaHptdXh3c3dxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk1Mjc2NzQsImV4cCI6MjA5NTEwMzY3NH0.E2-OYNd_yP-7DyjOYZxdNvGnvILjwWuNDa0Tdjq70v0';
 
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
