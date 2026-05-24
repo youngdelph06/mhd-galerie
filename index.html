@@ -3,6 +3,698 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MDH Institut — Ma Galerie</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --brown:       #5C3D2E;
+  --brown-dark:  #3E2A1F;
+  --brown-mid:   #7A5240;
+  --brown-light: #F5EDE6;
+  --brown-pale:  #FBF7F4;
+  --cream:       #F9F4EF;
+  --beige:       #EDE0D4;
+  --text:        #2C1A0E;
+  --text-mid:    #6B4C3B;
+  --text-light:  #A07060;
+  --border:      rgba(92,61,46,0.15);
+  --border-soft: rgba(92,61,46,0.08);
+  --white:       #FFFFFF;
+  --radius:      4px;
+  --shadow:      0 2px 12px rgba(92,61,46,0.08);
+}
+
+body {
+  font-family: 'Jost', sans-serif;
+  background: var(--cream);
+  color: var(--text);
+  min-height: 100vh;
+  font-weight: 400;
+}
+
+h1,h2,h3 { font-family: 'Cormorant Garamond', serif; }
+
+/* ===== HEADER ===== */
+.site-header {
+  background: var(--white);
+  border-bottom: 1px solid var(--border-soft);
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+.logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--text);
+  text-decoration: none;
+}
+.logo span { font-weight: 300; color: var(--text-mid); }
+.header-right { display: flex; align-items: center; gap: 12px; }
+.header-avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--brown); color: var(--white);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 500; letter-spacing: 0.05em;
+  cursor: pointer;
+}
+.btn-logout-header {
+  font-size: 13px; color: var(--text-light);
+  background: none; border: none; cursor: pointer;
+  font-family: 'Jost', sans-serif;
+  letter-spacing: 0.04em;
+  padding: 6px 10px;
+  border-radius: var(--radius);
+  transition: background 0.15s;
+}
+.btn-logout-header:hover { background: var(--brown-light); color: var(--brown); }
+
+/* ===== AUTH PAGE ===== */
+.auth-page {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.auth-visual {
+  background: var(--brown);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 3rem;
+  position: relative;
+  overflow: hidden;
+  min-height: 100vh;
+}
+.auth-visual-bg {
+  position: absolute; inset: 0;
+  background: linear-gradient(160deg, #7A5240 0%, #3E2A1F 60%, #2C1A0E 100%);
+}
+.auth-visual-pattern {
+  position: absolute; inset: 0; opacity: 0.06;
+  background-image: repeating-linear-gradient(
+    45deg, #fff 0, #fff 1px, transparent 0, transparent 50%
+  );
+  background-size: 20px 20px;
+}
+.auth-visual-content { position: relative; z-index: 1; }
+.auth-visual h1 {
+  font-size: 42px; font-weight: 600;
+  color: var(--white); line-height: 1.15;
+  margin-bottom: 1rem; letter-spacing: 0.02em;
+}
+.auth-visual p {
+  font-size: 14px; color: rgba(255,255,255,0.6);
+  line-height: 1.7; max-width: 320px; font-weight: 300;
+}
+.auth-visual-dots {
+  display: flex; gap: 8px; margin-top: 2rem;
+}
+.auth-visual-dots span {
+  width: 24px; height: 2px; border-radius: 1px;
+  background: rgba(255,255,255,0.3);
+}
+.auth-visual-dots span:first-child { background: var(--white); width: 40px; }
+
+.auth-form-wrap {
+  display: flex; align-items: center; justify-content: center;
+  padding: 3rem 2rem;
+  background: var(--white);
+}
+.auth-form-inner { width: 100%; max-width: 380px; }
+
+.auth-pretitle {
+  font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--text-light); margin-bottom: 8px; font-weight: 500;
+}
+.auth-title {
+  font-size: 32px; font-weight: 600; color: var(--text);
+  margin-bottom: 6px; line-height: 1.2;
+}
+.auth-subtitle {
+  font-size: 14px; color: var(--text-light);
+  margin-bottom: 2rem; font-weight: 300; line-height: 1.6;
+}
+
+.simplybook-notice {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 14px 16px; background: var(--brown-light);
+  border-radius: var(--radius); margin-bottom: 2rem;
+  border-left: 3px solid var(--brown);
+}
+.sbn-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+.sbn-text strong { display: block; font-size: 13px; font-weight: 600; color: var(--brown-dark); margin-bottom: 2px; }
+.sbn-text span { font-size: 12px; color: var(--text-mid); line-height: 1.5; }
+
+.field { margin-bottom: 1.25rem; }
+.field label {
+  display: block; font-size: 12px; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--text-light);
+  margin-bottom: 8px; font-weight: 500;
+}
+.field input {
+  width: 100%; padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 14px; font-family: 'Jost', sans-serif;
+  background: var(--white); color: var(--text);
+  outline: none; transition: border-color 0.2s;
+}
+.field input:focus { border-color: var(--brown); }
+.field input::placeholder { color: var(--text-light); }
+
+.btn-cta {
+  width: 100%; padding: 13px;
+  background: var(--brown); color: var(--white);
+  border: none; border-radius: var(--radius);
+  font-size: 13px; font-weight: 500;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  font-family: 'Jost', sans-serif; cursor: pointer;
+  transition: background 0.2s;
+  margin-top: 0.5rem;
+}
+.btn-cta:hover { background: var(--brown-dark); }
+
+.err { font-size: 12px; color: #B33A3A; margin-top: 8px; }
+
+.auth-switch {
+  margin-top: 1.5rem; font-size: 13px;
+  color: var(--text-light); text-align: center; line-height: 1.6;
+}
+.auth-switch a {
+  color: var(--brown); font-weight: 500;
+  cursor: pointer; text-decoration: none;
+  border-bottom: 1px solid rgba(92,61,46,0.3);
+}
+.auth-switch a:hover { border-color: var(--brown); }
+
+.divider {
+  display: flex; align-items: center; gap: 12px;
+  margin: 1.5rem 0;
+}
+.divider hr { flex: 1; border: none; border-top: 1px solid var(--border-soft); }
+.divider span { font-size: 12px; color: var(--text-light); letter-spacing: 0.04em; }
+
+/* ===== DASHBOARD ===== */
+.dashboard { max-width: 1080px; margin: 0 auto; padding: 2.5rem 1.5rem; }
+
+.dashboard-hero {
+  background: var(--brown);
+  border-radius: var(--radius);
+  padding: 2rem 2.5rem;
+  margin-bottom: 2rem;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.dashboard-hero-pattern {
+  position: absolute; inset: 0; opacity: 0.05;
+  background-image: repeating-linear-gradient(45deg, #fff 0, #fff 1px, transparent 0, transparent 50%);
+  background-size: 16px 16px;
+}
+.dh-content { position: relative; z-index: 1; }
+.dh-greeting {
+  font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: rgba(255,255,255,0.5); margin-bottom: 6px; font-weight: 400;
+}
+.dh-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 30px; font-weight: 600; color: var(--white);
+  margin-bottom: 4px; line-height: 1.2;
+}
+.dh-email { font-size: 13px; color: rgba(255,255,255,0.5); font-weight: 300; }
+.dh-badge {
+  position: relative; z-index: 1;
+  padding: 8px 14px; border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 99px; font-size: 12px; color: rgba(255,255,255,0.7);
+  letter-spacing: 0.06em; white-space: nowrap;
+}
+
+.stats-bar {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 1rem; margin-bottom: 2rem;
+}
+.stat-box {
+  background: var(--white); border: 1px solid var(--border-soft);
+  border-radius: var(--radius); padding: 1.25rem 1.5rem;
+}
+.stat-box-label {
+  font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--text-light); margin-bottom: 8px; font-weight: 500;
+}
+.stat-box-value {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px; font-weight: 600; color: var(--text);
+  line-height: 1;
+}
+.stat-box-value.small { font-size: 18px; padding-top: 4px; }
+
+/* Upload */
+.section-label {
+  font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--text-light); font-weight: 500; margin-bottom: 1rem;
+}
+.upload-area {
+  border: 1.5px dashed var(--border);
+  border-radius: var(--radius);
+  background: var(--white);
+  padding: 2.5rem 2rem;
+  text-align: center;
+  cursor: pointer;
+  margin-bottom: 2.5rem;
+  transition: border-color 0.2s, background 0.2s;
+}
+.upload-area:hover, .upload-area.drag {
+  border-color: var(--brown);
+  background: var(--brown-pale);
+}
+.upload-area-icon { font-size: 28px; color: var(--brown); margin-bottom: 10px; opacity: 0.7; }
+.upload-area-title { font-size: 15px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+.upload-area-hint { font-size: 13px; color: var(--text-light); font-weight: 300; }
+
+.progress-wrap { margin-top: 14px; height: 2px; background: var(--beige); border-radius: 1px; display: none; }
+.progress-bar  { height: 2px; background: var(--brown); border-radius: 1px; width: 0%; transition: width 0.2s; }
+
+/* Gallery */
+.gallery-section-header {
+  display: flex; align-items: baseline; gap: 12px;
+  margin-bottom: 1.25rem; border-bottom: 1px solid var(--border-soft);
+  padding-bottom: 1rem;
+}
+.gallery-section-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px; font-weight: 600; color: var(--text);
+}
+.gallery-count {
+  font-size: 12px; color: var(--text-light);
+  letter-spacing: 0.06em;
+}
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+.photo-card {
+  background: var(--white); border: 1px solid var(--border-soft);
+  border-radius: var(--radius); overflow: hidden;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.photo-card:hover { box-shadow: var(--shadow); transform: translateY(-2px); }
+
+.photo-thumb {
+  width: 100%; aspect-ratio: 4/3;
+  object-fit: cover; display: block; cursor: zoom-in;
+}
+.photo-meta { padding: 10px 12px; }
+.photo-meta-name {
+  font-size: 13px; font-weight: 500; color: var(--text);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  margin-bottom: 2px;
+}
+.photo-meta-date { font-size: 11px; color: var(--text-light); letter-spacing: 0.02em; }
+.photo-actions { display: flex; gap: 6px; margin-top: 10px; }
+.btn-del {
+  flex: 1; padding: 6px;
+  border: 1px solid var(--border-soft); border-radius: var(--radius);
+  background: none; color: var(--text-light);
+  font-size: 12px; font-family: 'Jost', sans-serif;
+  cursor: pointer; text-align: center;
+  transition: all 0.15s;
+}
+.btn-del:hover { background: #FEF0EE; color: #B33A3A; border-color: #F0C0B8; }
+
+.empty-gallery {
+  text-align: center; padding: 4rem 2rem;
+  color: var(--text-light);
+}
+.empty-gallery-icon { font-size: 48px; margin-bottom: 1rem; opacity: 0.3; display: block; }
+.empty-gallery-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px; font-weight: 600; color: var(--text-mid);
+  margin-bottom: 6px;
+}
+.empty-gallery-sub { font-size: 14px; font-weight: 300; line-height: 1.6; }
+
+/* Toast */
+.toast {
+  position: fixed; bottom: 2rem; right: 2rem;
+  background: var(--brown-dark); color: var(--white);
+  padding: 12px 20px; border-radius: var(--radius);
+  font-size: 13px; letter-spacing: 0.03em;
+  opacity: 0; transform: translateY(8px);
+  transition: all 0.25s; z-index: 999; pointer-events: none;
+}
+.toast.show { opacity: 1; transform: translateY(0); }
+
+/* Lightbox */
+.lightbox {
+  position: fixed; inset: 0;
+  background: rgba(44,26,14,0.95);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1000;
+}
+.lightbox img {
+  max-width: 88vw; max-height: 88vh;
+  object-fit: contain; border-radius: var(--radius);
+}
+.lb-close {
+  position: fixed; top: 1.5rem; right: 1.5rem;
+  width: 40px; height: 40px; border-radius: 50%;
+  background: rgba(255,255,255,0.1); border: none;
+  color: var(--white); font-size: 22px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: background 0.15s;
+}
+.lb-close:hover { background: rgba(255,255,255,0.2); }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .auth-page { grid-template-columns: 1fr; }
+  .auth-visual { display: none; }
+  .auth-form-wrap { padding: 2rem 1.25rem; }
+  .stats-bar { grid-template-columns: 1fr 1fr; }
+  .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+  .dashboard-hero { flex-direction: column; align-items: flex-start; }
+  .site-header { padding: 0 1rem; }
+}
+@media (max-width: 480px) {
+  .stats-bar { grid-template-columns: 1fr; }
+  .gallery-grid { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+}
+</style>
+</head>
+<body>
+
+<div id="root"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+// =============================================
+//  MDH Institut — Galerie Photos
+//  Stockage : localStorage (navigateur)
+// =============================================
+
+const USERS_KEY  = 'mdh_users_v2';
+const PHOTOS_KEY = 'mdh_photos_v2';
+
+const getUsers  = () => { try { return JSON.parse(localStorage.getItem(USERS_KEY)||'{}'); } catch(e){ return {}; } };
+const saveUsers = u => localStorage.setItem(USERS_KEY, JSON.stringify(u));
+const getPhotos = email => { try { return JSON.parse(localStorage.getItem(PHOTOS_KEY+'_'+email)||'[]'); } catch(e){ return []; } };
+const savePhotos= (email,p) => localStorage.setItem(PHOTOS_KEY+'_'+email, JSON.stringify(p));
+
+let currentUser = null;
+
+const initials = n => (n||'?').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+const fmtDate  = ts => new Date(ts).toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'});
+const fmtSize  = b => b>1048576?(b/1048576).toFixed(1)+' Mo':(b/1024).toFixed(0)+' Ko';
+
+function toast(msg, danger) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.background = danger ? '#7A2020' : '#3E2A1F';
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 3000);
+}
+
+// ---- Arrivée automatique depuis SimplyBook ----
+function checkURLParams() {
+  const p = new URLSearchParams(window.location.search);
+  const email = p.get('email');
+  const name  = p.get('name');
+  if (!email) return false;
+
+  const e = decodeURIComponent(email);
+  const n = decodeURIComponent(name || email.split('@')[0]);
+
+  const users = getUsers();
+  if (!users[e]) {
+    users[e] = { name:n, email:e, pw:null, createdAt:Date.now(), source:'simplybook' };
+    saveUsers(users);
+  }
+  currentUser = users[e];
+  window.history.replaceState({}, '', window.location.pathname);
+  toast('Bienvenue, ' + n.split(' ')[0] + ' !');
+  renderDashboard();
+  return true;
+}
+
+// ---- Écran Auth ----
+function renderAuth(mode) {
+  mode = mode || 'login';
+  const isLogin = mode === 'login';
+  document.getElementById('root').innerHTML = `
+    <div class="auth-page">
+
+      <!-- Panneau visuel gauche -->
+      <div class="auth-visual">
+        <div class="auth-visual-bg"></div>
+        <div class="auth-visual-pattern"></div>
+        <div class="auth-visual-content">
+          <h1>MDH<br>Institut</h1>
+          <p>Votre espace personnel pour partager et retrouver vos photos de coiffure.</p>
+          <div class="auth-visual-dots">
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Formulaire droit -->
+      <div class="auth-form-wrap">
+        <div class="auth-form-inner">
+
+          <div class="auth-pretitle">Galerie clients</div>
+          <h2 class="auth-title">${isLogin ? 'Connexion' : 'Créer un compte'}</h2>
+          <p class="auth-subtitle">${isLogin ? 'Accédez à votre espace photo personnel.' : 'Créez votre espace photo MDH Institut.'}</p>
+
+          <div class="simplybook-notice">
+            <span class="sbn-icon">🔗</span>
+            <div class="sbn-text">
+              <strong>Accès automatique</strong>
+              <span>Cliquez sur "Accéder à ma galerie" depuis votre espace de réservation pour vous connecter sans mot de passe.</span>
+            </div>
+          </div>
+
+          <div class="divider"><hr><span>ou accès manuel</span><hr></div>
+
+          ${!isLogin ? `<div class="field"><label>Nom complet</label><input type="text" id="f-name" placeholder="Marie Dupont"></div>` : ''}
+          <div class="field"><label>Adresse email</label><input type="email" id="f-email" placeholder="vous@exemple.com"></div>
+          <div class="field"><label>Mot de passe</label><input type="password" id="f-pw" placeholder="••••••••" onkeydown="if(event.key==='Enter')handleAuth('${mode}')"></div>
+          <div id="f-err" class="err"></div>
+
+          <button class="btn-cta" onclick="handleAuth('${mode}')">
+            ${isLogin ? 'Se connecter' : "Créer mon espace"}
+          </button>
+
+          <p class="auth-switch">
+            ${isLogin
+              ? `Pas encore de compte ? <a onclick="renderAuth('register')">Créer un espace</a>`
+              : `Déjà un compte ? <a onclick="renderAuth('login')">Se connecter</a>`}
+          </p>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function handleAuth(mode) {
+  const email = (document.getElementById('f-email')||{}).value?.trim();
+  const pw    = (document.getElementById('f-pw')||{}).value;
+  const err   = document.getElementById('f-err');
+  const users = getUsers();
+  err.textContent = '';
+
+  if (!email||!pw) { err.textContent='Veuillez remplir tous les champs.'; return; }
+  if (!/\S+@\S+\.\S+/.test(email)) { err.textContent='Email invalide.'; return; }
+
+  if (mode === 'register') {
+    const name = (document.getElementById('f-name')||{}).value?.trim();
+    if (!name) { err.textContent='Veuillez entrer votre nom.'; return; }
+    if (users[email]) { err.textContent='Ce compte existe déjà.'; return; }
+    users[email] = { name, email, pw, createdAt:Date.now(), source:'manuel' };
+    saveUsers(users);
+    currentUser = users[email];
+    toast('Compte créé avec succès !');
+  } else {
+    if (!users[email]) { err.textContent="Aucun compte trouvé pour cet email."; return; }
+    if (users[email].pw !== pw) { err.textContent='Mot de passe incorrect.'; return; }
+    currentUser = users[email];
+    toast('Bienvenue, ' + currentUser.name.split(' ')[0] + ' !');
+  }
+  renderDashboard();
+}
+
+// ---- Dashboard ----
+function renderDashboard() {
+  const photos    = getPhotos(currentUser.email);
+  const totalSize = photos.reduce((s,p)=>s+(p.size||0),0);
+  const source    = currentUser.source === 'simplybook' ? 'Via SimplyBook' : 'Compte manuel';
+
+  const galleryHTML = photos.length === 0
+    ? `<div class="empty-gallery">
+        <span class="empty-gallery-icon">🖼️</span>
+        <div class="empty-gallery-title">Aucune photo pour l'instant</div>
+        <p class="empty-gallery-sub">Cliquez sur la zone ci-dessus pour ajouter<br>vos premières photos de coiffure.</p>
+       </div>`
+    : `<div class="gallery-grid">
+        ${photos.map((p,i)=>`
+          <div class="photo-card">
+            <img class="photo-thumb" src="${p.data}" alt="${p.name}" onclick="openLightbox('${p.data}')">
+            <div class="photo-meta">
+              <div class="photo-meta-name">${p.name}</div>
+              <div class="photo-meta-date">${fmtDate(p.ts)} · ${fmtSize(p.size||0)}</div>
+              <div class="photo-actions">
+                <button class="btn-del" onclick="deletePhoto(${i})">Supprimer</button>
+              </div>
+            </div>
+          </div>`).join('')}
+       </div>`;
+
+  document.getElementById('root').innerHTML = `
+    <!-- Header -->
+    <header class="site-header">
+      <a class="logo" href="#">MDH <span>INSTITUT</span></a>
+      <div class="header-right">
+        <div class="header-avatar" title="${currentUser.name}">${initials(currentUser.name)}</div>
+        <button class="btn-logout-header" onclick="logout()">Déconnexion</button>
+      </div>
+    </header>
+
+    <!-- Dashboard -->
+    <main class="dashboard">
+
+      <!-- Hero -->
+      <div class="dashboard-hero">
+        <div class="dashboard-hero-pattern"></div>
+        <div class="dh-content">
+          <div class="dh-greeting">Espace personnel</div>
+          <div class="dh-name">${currentUser.name}</div>
+          <div class="dh-email">${currentUser.email}</div>
+        </div>
+        <div class="dh-badge">${source}</div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-bar">
+        <div class="stat-box">
+          <div class="stat-box-label">Photos partagées</div>
+          <div class="stat-box-value">${photos.length}</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-box-label">Espace utilisé</div>
+          <div class="stat-box-value small">${photos.length ? fmtSize(totalSize) : '—'}</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-box-label">Membre depuis</div>
+          <div class="stat-box-value small">${fmtDate(currentUser.createdAt)}</div>
+        </div>
+      </div>
+
+      <!-- Upload -->
+      <div class="section-label">Ajouter des photos</div>
+      <div class="upload-area" id="dz" onclick="document.getElementById('fi').click()">
+        <input type="file" id="fi" style="display:none" accept="image/*" multiple onchange="handleFiles(this.files)">
+        <div class="upload-area-icon">📷</div>
+        <div class="upload-area-title">Cliquez ou glissez vos photos ici</div>
+        <div class="upload-area-hint">JPG, PNG, WEBP acceptés</div>
+        <div class="progress-wrap" id="pw"><div class="progress-bar" id="pb"></div></div>
+      </div>
+
+      <!-- Gallery -->
+      <div class="gallery-section-header">
+        <div class="gallery-section-title">Ma galerie</div>
+        <div class="gallery-count">${photos.length} photo${photos.length!==1?'s':''}</div>
+      </div>
+      ${galleryHTML}
+
+    </main>
+  `;
+
+  // Drag & drop
+  const dz = document.getElementById('dz');
+  if (dz) {
+    dz.addEventListener('dragover', e=>{ e.preventDefault(); dz.classList.add('drag'); });
+    dz.addEventListener('dragleave', ()=>dz.classList.remove('drag'));
+    dz.addEventListener('drop', e=>{ e.preventDefault(); dz.classList.remove('drag'); handleFiles(e.dataTransfer.files); });
+  }
+}
+
+// ---- Upload ----
+function handleFiles(files) {
+  const images = Array.from(files).filter(f=>f.type.startsWith('image/'));
+  if (!images.length) return;
+  const pw = document.getElementById('pw');
+  const pb = document.getElementById('pb');
+  if (pw) pw.style.display='block';
+
+  const photos = getPhotos(currentUser.email);
+  let done = 0;
+
+  images.forEach(file => {
+    const r = new FileReader();
+    r.onload = e => {
+      photos.unshift({ name:file.name, data:e.target.result, ts:Date.now(), size:file.size });
+      done++;
+      if (pb) pb.style.width = Math.round(done/images.length*100)+'%';
+      if (done === images.length) {
+        savePhotos(currentUser.email, photos);
+        toast(done+' photo'+(done>1?'s':'')+' ajoutée'+(done>1?'s':'')+'!');
+        renderDashboard();
+      }
+    };
+    r.readAsDataURL(file);
+  });
+}
+
+// ---- Suppression ----
+function deletePhoto(i) {
+  if (!confirm('Supprimer cette photo ?')) return;
+  const photos = getPhotos(currentUser.email);
+  photos.splice(i,1);
+  savePhotos(currentUser.email, photos);
+  toast('Photo supprimée.', true);
+  renderDashboard();
+}
+
+// ---- Lightbox ----
+function openLightbox(src) {
+  const lb = document.createElement('div');
+  lb.className = 'lightbox';
+  lb.innerHTML = `<img src="${src}"><button class="lb-close" onclick="this.parentElement.remove()">✕</button>`;
+  lb.onclick = e => { if(e.target===lb) lb.remove(); };
+  document.body.appendChild(lb);
+}
+
+// ---- Déconnexion ----
+function logout() {
+  currentUser = null;
+  toast('Déconnexion réussie.');
+  renderAuth('login');
+}
+
+// ---- Init ----
+if (!checkURLParams()) {
+  renderAuth('login');
+}
+</script>
+</body>
+</html><!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MDH Institut — Galerie Photos</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
